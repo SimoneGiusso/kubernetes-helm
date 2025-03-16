@@ -1,0 +1,35 @@
+apiVersion: apps/v1  # Specifies the API version
+kind: Deployment  # Specifies that this is a Deployment object
+metadata:
+  name: nginx-deployment  # Name of the deployment
+  labels:
+    app: nginx  # Labels to identify the deployment
+  annotations:
+    kubernetes.io/change-cause: "Updated container image to nginx:1.14.2"  # Reason for the update
+spec:
+  replicas: 5  # Number of desired pod replicas
+  selector:
+    matchLabels:
+      type: webserver  # Label selector to identify the pods managed by this deployment
+  strategy:
+    type: RollingUpdate  # Deployment strategy type
+    rollingUpdate:
+      maxUnavailable: 1  # Maximum number of pods that can be unavailable during the update
+      maxSurge: 1  # Maximum number of pods that can be created above the desired number of pods
+  template:
+    metadata:
+      labels:
+        type: webserver  # Labels to apply to the pods
+    spec:
+      containers:
+      - name: nginx  # Name of the container
+        image: nginx:1.14.2  # Docker image to use for the container
+        ports:
+        - containerPort: 80  # Port that the container exposes
+        resources:
+          limits:
+            memory: "128Mi"  # Memory limit for the container
+            cpu: "150m"  # CPU limit for the container
+          requests:
+            memory: "64Mi"  # Memory request for the container
+            cpu: "100m"  # CPU request for the container

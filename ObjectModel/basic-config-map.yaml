@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: basic-config-map
+data:
+  # Values can be defined as key-value pairs (see more options in config-map-complete-example.yaml)
+  nginx_port: "90"

@@ -1,0 +1,16 @@
+apiVersion: batch/v1  # Specifies the Kubernetes API version for the resource.
+kind: CronJob
+metadata:
+  name: sleepy
+spec:
+  schedule: "*/1 * * * *" # The Job will run every 2 minutes.
+  jobTemplate:           # Specifies the Pod template that defines the Pod(s) to be created by this Job.
+    spec:
+      template:
+        spec:
+          containers:     # Defines the list of containers in the Pod.
+          - name: resting
+            image: busybox
+            command: ["/bin/sleep"] # Defines the command to run inside the container.
+            args: ['3']    # Supplies arguments to the command; here, the container will sleep for 3 seconds.
+          restartPolicy: Never # Specifies that the Pod should not be restarted upon completion or failure.

@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-config
+data:
+  # Configuration values can be defined as key-value pairs
+  database_url: "mongodb://localhost:27017"
+  database_name: "exampledb"
+  log_level: "INFO"
+  # Multi-line values can be defined using the |- syntax
+  config.yaml: |
+    apiVersion: v1
+    kind: Config
+    metadata:
+      name: example-config
+    data:
+      key1: value1
+      key2: value2
+  # You can also include entire files as values
+  app.properties: |
+    app.name=ExampleApp
+    app.version=1.0.0
+      ---
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: configmap-pod
+      spec:
+        containers:
+        - name: configmap-container
+          image: busybox
+          command: ["/bin/sh", "-c", "while true; do echo hello; sleep 10;done"]
+          env:
+          # Environment variable DATABASE_URL is populated from the ConfigMap
+          - name: DATABASE_URL
+            valueFrom:
+            configMapKeyRef:
+              name: example-config
+              key: database_url
+          # Environment variable DATABASE_NAME is populated from the ConfigMap
+          - name: DATABASE_NAME
+            valueFrom:
+            configMapKeyRef:
+              name: example-config
+              key: database_name
+          # Environment variable LOG_LEVEL is populated from the ConfigMap
+          - name: LOG_LEVEL
+            valueFrom:
+            configMapKeyRef:
+              name: example-config
+              key: log_level
+          volumeMounts:
+          # Mount the ConfigMap as a volume at /etc/config
+          - name: config-volume
+            mountPath: /etc/config
+        volumes:
+        # Define the volume that sources from the ConfigMap
+        - name: config-volume
+          configMap:
+          name: example-config

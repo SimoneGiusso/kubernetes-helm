@@ -1,0 +1,8 @@
+# Build a set of resources using a 'kustomization.yaml' file. You can apply it via kubectl apply -k ./ instead of create a resource one by one
+secretGenerator: # an easy way to create a secret object
+- name: mysql-pass
+  literals:
+  - password=test
+resources:
+  - mysql-deployment.yaml
+  - wordpress-deployment.yaml

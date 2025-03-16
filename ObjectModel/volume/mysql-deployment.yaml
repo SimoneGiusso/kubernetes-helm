@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+  clusterIP: None # Define a headless service. No cluster IP assigned and no load-balancing. headless Services report the endpoint IP addresses of the individual pods via internal DNS records
+# A PV is a representation of storage volume in the cluster that is provisioned by an admin, or dynamically provisioned by Kubernetes, to fulfill a request made in a PVC. 
+# Most of the time, you don't need to directly configure PersistentVolume objects or create Compute Engine persistent disks. Instead, you can create a PersistentVolumeClaim and Kubernetes automatically provisions a persistent disk for you specified by storage classss.
+# In GKE standard-rwo is the default storageClass which uses the Compute Engine persistent disk CSI Driver (pd.csi.storage.gke.io) which enables the automatic deployment and management of the persistent disk.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce # allow multiple pods to access (read from or write to) that volume when the pods are running on the same node
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:8.0
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        - name: MYSQL_DATABASE
+          value: wordpress
+        - name: MYSQL_USER
+          value: wordpress
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim

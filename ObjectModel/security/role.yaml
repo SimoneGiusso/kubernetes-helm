@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1  # API version for the Role
+kind: Role  # Specifies that this is a Role object
+metadata:
+  name: example-role  # Name of the Role
+  namespace: default  # Namespace where the Role is applied
+rules:
+  - apiGroups: [""]  # "" indicates the core API group
+    resources: ["pods"]  # Resources this rule applies to
+    verbs: ["get", "list", "watch"]  # Allowed actions on the resources
+  - apiGroups: ["apps"]  # API group for the resources
+    resources: ["deployments"]  # Resources this rule applies to
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Allowed actions on the resources

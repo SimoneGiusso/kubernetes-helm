@@ -1,0 +1,16 @@
+apiVersion: batch/v1  # Specifies the Kubernetes API version for the resource.
+kind: Job  
+metadata:             
+  name: sleepy
+spec:                 
+  completions: 5      # Specifies the number of Pods that should be created by this Job.
+  parallelism: 2      # Specifies the maximum number of Pods that should be created at any given time.
+  activeDeadlineSeconds: 600 # Specifies the maximum duration in seconds that the Job can run. This affects the Job as a whole, not individual Pods. E.g. 4 pods may run but the 5th pod will not be created if the Job runs for more than 600 seconds.
+  template:           # Specifies the Pod template that defines the Pod(s) to be created by this Job.
+    spec:             
+      containers:     # Defines the list of containers in the Pod.
+      - name: resting
+        image: busybox
+        command: ["/bin/sleep"] # Defines the command to run inside the container.
+        args: ['3']    # Supplies arguments to the command; here, the container will sleep for 3 seconds.
+      restartPolicy: Never # Specifies that the Pod should not be restarted upon completion or failure.

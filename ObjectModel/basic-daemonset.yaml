@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-daemonset
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-daemonset # Label to match the pods managed by this DaemonSet
+  template:
+    metadata:
+      labels:
+        app: nginx-daemonset # Label applied to the pods
+    spec:
+      #nodeSelector:
+        #disktype: ssd # Node selector to deploy pods only on nodes with this label
+      containers:
+      - name: nginx-container
+        image: nginx:latest # Container image to be used
+        ports:
+        - containerPort: 80 # Port exposed by the container
+  minReadySeconds: 30 # Minimum number of seconds for which a newly created pod should be considered ready
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1 # Maximum number of pods that can be unavailable during the update

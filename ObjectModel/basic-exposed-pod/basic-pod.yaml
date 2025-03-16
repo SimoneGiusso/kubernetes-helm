@@ -1,0 +1,54 @@
+apiVersion: v1 # Specifies the API version
+kind: Pod # Specifies the kind of Kubernetes object
+metadata:
+  name: basicpod # Name of the Pod
+  labels:
+    type: webserver # Label to categorize the Pod
+spec:
+  containers:
+    - name: webcont # Name of the container
+      image: nginx # Docker image to use for the container
+      env:
+        - name: NGINX_PORT
+          valueFrom: 
+            configMapKeyRef: 
+              name: basic-config-map
+              key: nginx_port
+      ports:
+        - containerPort: 80 # Port to expose on the container
+      #volumeMounts:
+        #- mountPath: /usr/share/nginx/html # Path to mount the volume inside the container
+          #name: webcontent # Name of the volume to mount
+      livenessProbe: # checks if the container is still running.
+        httpGet:
+          path: / # Path to check for liveness
+          port: 80 # Port to use for the liveness check
+        timeoutSeconds: 5 # Timeout for the liveness check
+        initialDelaySeconds: 30 # Initial delay before starting liveness checks
+        periodSeconds: 10 # Period between liveness checks
+        failureThreshold: 3 # Number of failures before marking the container as unhealthy
+      readinessProbe: # determine if a container is ready to start accepting traffic (this is a continues check unlike startup)
+        httpGet:
+          path: / # Path to check for readiness
+          port: 80 # Port to use for the readiness check
+        timeoutSeconds: 5 # Timeout for the readiness check
+        initialDelaySeconds: 5 # Initial delay before starting readiness checks
+        periodSeconds: 10 # Period between readiness checks
+        failureThreshold: 3 # Number of failures before marking the container as not ready
+      startupProbe: # if a container has started successfully
+        httpGet:
+          path: / # Path to check for startup
+          port: 80 # Port to use for the startup check
+        timeoutSeconds: 5 # Timeout for the startup check
+        initialDelaySeconds: 10 # Initial delay before starting startup checks
+        periodSeconds: 10 # Period between startup checks
+      resources:
+        requests:
+          memory: "64Mi" # Minimum amount of memory the container will request (Mi = Mebibytes)
+          cpu: "250m" # Minimum amount of CPU the container will request (m = millicores)
+        limits:
+          memory: "128Mi" # Maximum amount of memory the container can use (Mi = Mebibytes)
+          cpu: "500m" # Maximum amount of CPU the container can use (m = millicores)
+  #volumes:
+   # - name: webcontent # Name of the volume
+    #  emptyDir: {} # Defines an emptyDir volume that will be mounted to the container

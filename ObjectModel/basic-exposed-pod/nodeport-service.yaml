@@ -1,0 +1,15 @@
+# Expose the pod
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeport-service  # The name of the Service, used to uniquely identify it within the namespace
+spec:
+  selector:
+    type: webserver  # The selector to match the Pods that this Service will expose
+  type: NodePort  # The type of Service to create. NodePort exposes the Service on each Node's IP (external IP) at a static port (the NodePort). Therefore the Service can be accessed outside the cluster using <NodeIP>:<NodePort>. Be careful NodePort is not the Service port, but the port on which the Service is exposed on each Node.
+  ports:
+    - nodePort: 30007  # This is the port on each Node's IP address that will be exposed externally. It allows the Service to be accessed from outside the cluster using <NodeIP>:<NodePort>. This port must be within the range 30000-32767 (default is random)
+      protocol: TCP
+      port: 85  # This is the port on which the Service is exposed internally within the cluster. Other Pods within the cluster can access the Service using this port.
+      targetPort: 80  # The port that the Service will forward traffic to the Pod that it selects. This is the port that the container exposes.

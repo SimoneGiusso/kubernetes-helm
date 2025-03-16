@@ -1,0 +1,11 @@
+# A NetworkPolicy is a specification of how groups of pods are allowed to communicate with each other and other network endpoints.
+# This policy denies all ingress and egress traffic by default.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-default  # The name of the NetworkPolicy
+spec:
+  podSelector: {}  # Selects all pods in the namespace
+  policyTypes:
+    - Ingress  # Apply this policy to incoming traffic
+    - Egress  # Apply this policy to outgoing traffic

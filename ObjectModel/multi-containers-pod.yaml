@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-init-containers
+  labels:
+    app.kubernetes.io/name: MyApp
+spec:
+  containers:
+  - name: busybox
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+  initContainers:
+  - name: init-1
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo doing some initialization! && sleep 20']
+  - name: log-side-container
+    image: alpine:latest
+    restartPolicy: Always # This marks the container as side container
+    command: ['sh', '-c', 'tail -F /opt/logs.txt']
+    volumeMounts:
+      - name: data
+        mountPath: /opt
+  volumes:
+    - name: data
+      emptyDir: {}
+

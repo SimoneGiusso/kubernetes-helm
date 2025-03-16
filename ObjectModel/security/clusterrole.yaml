@@ -1,0 +1,15 @@
+# A ClusterRole defines a set of permissions that can be applied at the cluster level.
+# It allows you to specify what actions can be performed on which resources.
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secret-access-cr  # The name of the ClusterRole
+rules:
+  - apiGroups:
+      - ""  # The API group to which the resources belong
+    resources:
+      - secrets  # The type of resource this rule applies to
+    verbs:
+      - get  # Allow getting secrets
+      - list  # Allow listing secrets

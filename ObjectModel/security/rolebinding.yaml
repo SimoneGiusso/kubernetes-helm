@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secret-rb  # The name of the RoleBinding
+subjects:
+  - kind: ServiceAccount
+    name: secret-access-sa  # The name of the ServiceAccount to bind to the role
+roleRef:
+  kind: ClusterRole
+  name: secret-access-cr  # The name of the ClusterRole to bind to the ServiceAccount
+  apiGroup: rbac.authorization.k8s.io
+# A RoleBinding grants the permissions defined in a Role or ClusterRole to a user or set of users.
+# It specifies the subjects (users, groups, or service accounts) and the role being granted.
