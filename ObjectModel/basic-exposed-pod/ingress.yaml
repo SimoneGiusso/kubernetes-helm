@@ -1,32 +1,34 @@
-apiVersion: networking.k8s.io/v1  # Specifies the API version
-kind: Ingress  # Defines the type of resource as Ingress
+# External traffic routing to the cluster using Ingress
+
+apiVersion: networking.k8s.io/v1 # Specifies the API version
+kind: Ingress # Defines the type of resource as Ingress
 metadata:
-  name: example-ingress  # Name of the Ingress resource
-  namespace: default  # Namespace where the Ingress resource is created
+  name: example-ingress # Name of the Ingress resource
+  namespace: default # Namespace where the Ingress resource is created
   annotations:
     # nginx.ingress.kubernetes.io/rewrite-target: /  # This allow the modify the path as it gets proxied
 spec:
-  ingressClassName: traefik  # Specifies the Ingress class implementation to use
-  defaultBackend:  # Default backend to handle requests that do not match any rules
+  ingressClassName: traefik # Specifies the Ingress class implementation to use
+  defaultBackend: # Default backend to handle requests that do not match any rules
     service:
-      name: example-service  # Name of the default backend service
+      name: example-service # Name of the default backend service
       port:
-        number: 80  # Port number of the default backend service
+        number: 80 # Port number of the default backend service
   rules:
-  - host: example.com  # Hostname for the Ingress rule
-    http:
-      paths:
-      - path: /pippo  # Path for the Ingress rule
-        pathType: Prefix  # Type of path matching
-        backend:
-          service:
-            name: nodeport-service  # Name of the backend service
-            port:
-              number: 85  # Port number of the backend service (internal port)
-      - path: /a  # New path for the Ingress rule (longest prefix matches wins)
-        pathType: Prefix  # Type of path matching
-        backend:
-          service:
-            name: example-service-2  # Name of the new backend service
-            port:
-              number: 80  # Port number of the new backend service
+    - host: example.com # Hostname for the Ingress rule
+      http:
+        paths:
+          - path: /pippo # Path for the Ingress rule
+            pathType: Prefix # Type of path matching
+            backend:
+              service:
+                name: nodeport-service # Name of the backend service
+                port:
+                  number: 85 # Port number of the backend service (internal port)
+          - path: /a # New path for the Ingress rule (longest prefix matches wins)
+            pathType: Prefix # Type of path matching
+            backend:
+              service:
+                name: example-service-2 # Name of the new backend service
+                port:
+                  number: 80 # Port number of the new backend service
